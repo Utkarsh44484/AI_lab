@@ -1,0 +1,78 @@
+import sys
+
+# Define the initial state of the jugs
+initial_state = [0, 0, 0]
+
+ 
+# Define the maximum capacity of each jug
+capacities = [0, 0, 0]
+
+# Start the DFS search from the initial state
+visited = set()
+
+def take_input():
+    print("Enter Capacity of 3 jugs")
+    # a,b,c=map(int,input().split())
+    inp = list(map(int, input().split()))
+    initial_state[0]=inp[0]
+    capacities[0]=inp[0]
+    capacities[1]=inp[1]
+    capacities[2]=inp[2]
+    print("Enter Goal : ")
+    z=int(input())
+    return z   
+# Define a function to check if the current state is valid   
+def is_valid(state):
+    if state[0] < 0 or state[0] > capacities[0]:
+        print("invalid")
+        return False
+    if state[1] < 0 or state[1] > capacities[1]:
+        print("invalid")
+        return False
+    if state[2] < 0 or state[2] > capacities[2]:
+        print("invalid")
+        return False
+    if state[0] + state[1] + state[2] != capacities[0]:
+        print("invalid4")
+
+        return False
+    return True
+
+# Define a DFS function to explore all possible paths
+def dfs(state,goal):
+    print("Exploring state:", state)
+    # Check if the current state is valid and goal state is reached
+    if   (goal in state) :
+        print("Goal Reached !")
+        return [state]
+    # Check if the current state is valid and not visited before
+    if is_valid(state) and  tuple(state) not in visited:
+        # Add the current state to visited states
+        visited.add(tuple(state))
+        # Explore all possible actions
+        for i in range(3):
+            for j in range(3):
+                # Check if the action is valid
+                if i != j and state[i] > 0 and state[j] < capacities[j]:
+                    # Perform the action and recursively explore the new state
+                    new_state = list(state)
+                    amount = min(state[i], capacities[j]-state[j])
+                    new_state[i] -= amount
+                    new_state[j] += amount
+                    print(f"Pouring {amount} liters from jug {i+1} to jug {j+1}. New state: {new_state}")
+                    path = dfs(tuple(new_state),goal)
+                    # If the goal state is found, return the path to it
+                    if path is not None:
+                        return [state] + path
+        # If all actions have been explored and the goal state is not found, return None
+        return None
+
+goal=take_input()
+print(capacities)
+path = dfs(initial_state,goal)
+# Print the solution path
+if path is not None:
+    for i in range(len(path)):
+        print(f"Step {i}: {path[i]}")
+else:
+    print("No solution found.")
